@@ -1,0 +1,73 @@
+﻿@model AddEpisodeViewModel
+@{
+    ViewData["Title"] = "افزودن قسمت جدید";
+}
+
+<div class="container">
+    <nav aria-label="breadcrumb">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">پلتفرن دوره های آنلاین</a></li>
+            <li class="breadcrumb-item active" aria-current="page"> @ViewData["Title"] </li>
+        </ul>
+    </nav>
+</div>
+
+<main>
+    <div class="container">
+        <div class="user-account">
+            <div class="row">
+                <partial name="_SideBar" />
+                <div class="col-md-9 col-sm-8 col-xs-12">
+                    <section class="user-account-content">
+                        <header><h1> @ViewData["Title"] </h1></header>
+                        <div class="inner form-layer">
+                            <form asp-action="AddEpisode" method="post" enctype="multipart/form-data">
+                                <input type="hidden" asp-for="CourseId"/>
+                                <div class="row">
+                                    <div class="col-md-5 col-sm-8 col-xs-12">
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><i class="zmdi zmdi-file-text"></i></span>
+                                            <input type="text" class="form-control" asp-for="EpisodeTitle" placeholder="عنوان جلسه">
+                                        </div>
+                                        <span asp-validation-for="EpisodeTitle" class="text-danger"></span>
+                                    </div>
+
+                                    <div class="col-md-5 col-sm-8 col-xs-12">
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><i class="zmdi zmdi-time"></i></span>
+                                            <input type="text" class="form-control" asp-for="EpisodeTime" placeholder="00:00:00">
+                                        </div>
+                                        <span asp-validation-for="EpisodeTime" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="checkbox">
+                                            <label>
+                                            <input type="checkbox" asp-for="IsFree" value="true" /> رایگان است
+                                        </div>
+                                    </div>
+                                    <div class="col-md-7 col-sm-8 col-xs-12">
+                                        <p class="help-block">
+                                            فایل قسمت
+                                        </p>
+                                        <input type="file" name="episodeFile" />
+                                        <p class="text-danger">لطفا فقط فایل فشرده انتخاب کنید</p>
+                                        @if (ViewBag.EmptyFile != null)
+                                        {
+                                            <div class="alert alert-danger">
+                                                @ViewBag.EmptyFile
+                                            </div>
+                                        }
+                                    </div>
+                                    <br />
+                                    <div class="col-md-7 col-sm-8 col-xs-12">
+                                        <button type="submit" class="btn btn-success">ثبت قسمت جدید</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

@@ -1,0 +1,197 @@
+﻿@model Order
+@inject IUserService _userService;
+@{
+    ViewData["Title"] = "نمایش فاکتور";
+    int orderSum = @Model.OrderSum;
+    string discountType = ViewBag.DiscountType.ToString();
+}
+
+<div class="container">
+    <nav aria-label="breadcrumb">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">پلتفرن دوره های آنلاین</a></li>
+            <li class="breadcrumb-item active" aria-current="page"> نمایش فاکتور </li>
+        </ul>
+    </nav>
+</div>
+
+<main>
+    <div class="container">
+        <div class="user-account">
+            <div class="row">
+                <partial name="_SideBar"/>
+                <div class="col-md-9 col-sm-8 col-xs-12">
+                    <section class="user-account-content">
+                        <header><h1>فاکتور شما</h1></header>
+                        @if (ViewBag.IsPay)
+                        {
+                            <div class="alert alert-success">
+                                فاکتور شما با موفقیت پرداخت شد.
+                            </div>
+                        }
+
+                        @if(Model.OrderDetails.Count == 0)
+                        {
+                            <div class="alert alert-danger">
+                               دوره ای در سبد خرید شما وجود ندارد
+                            </div>
+                        }
+                        else
+                        {
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>دوره</th>
+                                    <th>قیمت</th>
+                                </tr>
+
+                            </thead>
+                            <tbody>
+                                @foreach(OrderDetail detail in Model.OrderDetails)
+                                {
+                                    <tr>
+                                        <td>
+                                           <a asp-controller="Course" asp-action="ShowCourse" asp-route-courseId="@detail.Course.CourseId" target="_blank">
+                                               @detail.Course.CourseTitle
+                                           </a>
+                                        </td>
+                                        <td>
+                                            @detail.Course.CoursePrice.ToString("#,0")
+                                        </td>
+                                        @if(!Model.IsFinished)
+                                        {
+                                            <td>
+                                                <a href="/UserPanel/Order/DeleteDetail/@detail.DetailId?orderId=@detail.OrderId"
+                                                   class="btn btn-danger">حذف</a>
+                                            </td>
+                                        }
+                                    </tr>
+                                }
+
+                                    <tr>
+                                        <td colspan="1" class="text-left"> جمع کل</td>
+                                        <td>@orderSum</td>
+                                    </tr>
+
+                                @if(!Model.IsFinished)
+                                {
+                                    <tr>
+                                        <td colspan="1" class="text-left"> کد تخفیف</td>
+                                        <td>
+                                            <form action="UseDiscount" method="post">
+                                                <input type="hidden" name="orderId" value="@Model.OrderId">
+                                                <input type="text" class="form-control" name="discountCode"/>
+                                                <br />
+                                                <input type="submit" class="btn btn-primary btn-block" value="اعمال"/>
+                                            </form>
+                                            @if(discountType != null)
+                                            {
+                                                switch(discountType)
+                                                {
+                                                    case "Success":
+                                                    {
+                                                        <div class="alert alert-success">
+                                                            <p class="text-muted">
+                                                                کد با موفقیت اعمال گردید.
+                                                            </p>
+                                                        </div>
+                                                        break;
+                                                    }
+
+                                                    case "ExpiredDate":
+                                                    {
+                                                        <div class="alert alert-danger">
+                                                            <p class="text-muted">
+                                                                کد تخفیف منقضی شده است.
+                                                            </p>
+                                                        </div>
+                                                        break;
+                                                    }
+
+                                                    case "NotFound":
+                                                    {
+                                                        <div class="alert alert-warning">
+                                                            <p class="text-muted">
+                                                                کد معتبر نمی باشد.
+                                                            </p>
+                                                        </div>
+                                                        break;
+                                                    }
+
+                                                    case "Finished":
+                                                    {
+                                                        <div class="alert alert-danger">
+                                                            <p class="text-muted">
+                                                                تعداد مجاز استفاده از کد به اتمام رسیده است.
+                                                            </p>
+                                                            </div>
+                                                            break;
+                                                        }
+
+                                                    case"UsedInOrder":
+                                                    {
+                                                        <div class="alert alert-warning">
+                                                            <p class="text-muted">
+                                                               شما در این سفارش از کد تخفیف استفاده کرده اید
+                                                            </p>
+                                                        </div>
+                                                        break;
+                                                    }
+
+                                                    case "UsedByUser":
+                                                    {
+                                                        <div class="alert alert-info">
+                                                            <p class="text-muted">
+                                                                این کد قبلا توسط شما استفاده شده است.
+                                                            </p>
+                                                        </div>
+                                                        break;
+                                                    }
+
+                                                    case "EmptyOrder":
+                                                    {
+                                                        <div class="alert alert-info">
+                                                            <p class="text-muted">
+                                                                لطفا محصولی را به سبد خرید اضافه کنید
+                                                            </p>
+                                                        </div>
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="1" class="text-left"></td>
+                                        <td colspan="1">
+                                            @if (_userService.UserWalletBalance(User.Identity.Name) >= orderSum)
+                                            {
+                                                    <a class="btn btn-success btn-block" href="/UserPanel/Order/PayOrder?orderId=@Model.OrderId">
+                                                        تایید فاکتور
+                                                    </a>
+                                            }
+                                            else
+                                            {
+                                                    <a class="btn btn-success btn-block" disabled>
+                                                        تایید فاکتور
+                                                    </a>       
+                                                    <br />
+                                                    <div class="alert alert-danger">
+                                                        موجودی کیف پول شما کافی نمی باشد. لطفا از طریق این 
+                                                            <a href="/UserPanel/Wallet" class="alert-link">لینک</a>
+                                                        اقدام به شارژ حساب خود کنید.
+                                                    </div>
+                                            }
+                                        </td>
+                                    </tr>                                   
+                                }
+                            </tbody>
+                        </table>                           
+                        }
+
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

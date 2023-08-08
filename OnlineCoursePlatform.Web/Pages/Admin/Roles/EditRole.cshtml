@@ -1,0 +1,76 @@
+﻿@page "{id}"
+@model OnlineCoursePlatform.Web.Pages.Admin.Roles.EditRoleModel
+
+@{
+    ViewData["Title"] = "ویرایش نقش";
+    List<Permission> permissions = ViewData["Permissions"] as List<Permission>;
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">ویرایش نقش</h1>
+    </div>
+</div>
+
+<div class="row">
+    <form method="post">
+        <input type="hidden" asp-for="Role.RoleId"/>
+        <div class="col-md-8">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    ویرایش نقش @Model.Role.RoleTitle
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label>عنوان نقش</label>
+                        <input type="text" asp-for="Role.RoleTitle" class="form-control" />
+                    </div>
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <input type="submit" value="ذخیره اطلاعات" class="btn btn-success"/>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    دسترسی های نقش
+                </div>
+                <div class="panel-body">
+                    @{
+                        List<int> rolePermissions = ViewData["RolePermissions"] as List<int>;
+                    }
+                    <ul>
+                        @foreach(Permission permission in permissions.Where(p => p.ParentId == null))
+                        {
+                            <li>
+                                <input type="checkbox" name="selectedPermissions" value="@permission.PermissionId" @((rolePermissions.Any(p => p == permission.PermissionId)?"checked":""))/> @permission.PermissionTitle
+                                @if(permissions.Any(p => p.ParentId == permission.PermissionId))
+                                {
+                                    <ul>
+                                        @foreach (Permission sub in permissions.Where(p => p.ParentId == permission.PermissionId))
+                                        {
+                                            <li>
+                                                            <input type="checkbox" name="selectedPermissions" value="@sub.PermissionId" @((rolePermissions.Any(p => p == sub.PermissionId)?"checked":""))/> @sub.PermissionTitle
+                                                @if(permissions.Any(p => p.ParentId == sub.PermissionId))
+                                                {
+                                                    <ul>
+                                                        @foreach(Permission sub2 in permissions.Where(p => p.ParentId == sub.PermissionId))
+                                                        {
+                                                            <li>
+                                                                                    <input type="checkbox" name="selectedPermissions" value="@sub2.PermissionId" @((rolePermissions.Any(p => p == sub2.PermissionId)?"checked":""))/> @sub2.PermissionTitle
+                                                            </li>
+                                                        }
+                                                    </ul>
+                                                }
+                                            </li>
+                                        }
+                                    </ul>
+                                }
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

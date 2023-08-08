@@ -1,0 +1,21 @@
+﻿@page "{id}"
+@model OnlineCoursePlatform.Web.Pages.Admin.Courses.DeleteEpisodeModel
+@{
+    ViewData["Title"] = "حذف قسمت ";
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">حذف قسمت</h1>
+    </div>
+</div>
+
+<form method="post">
+    <input type="hidden" asp-for="@Model.Episode.EpisodeId" />
+    <input type="hidden" asp-for="@Model.Episode.CourseId" />
+    <div class="alert alert-danger">
+        آیا از حذف قسمت "@Model.Episode.EpisodeTitle" مطمئن هستید؟
+    </div>
+
+    <input type="submit" class="btn btn-danger" value="حذف" />
+</form>

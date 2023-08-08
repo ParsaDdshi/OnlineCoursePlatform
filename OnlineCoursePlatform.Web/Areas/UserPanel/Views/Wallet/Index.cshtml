@@ -1,0 +1,84 @@
+﻿@model ChargeWalletViewModel
+@inject IUserService _userService;
+@{
+    ViewData["Title"] = "کیف پول شما";
+}
+
+<div class="container">
+    <nav aria-label="breadcrumb">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">پلتفرم دوره های آنلاین</a></li>
+            <li class="breadcrumb-item active" aria-current="page"> کیف پول شما </li>
+        </ul>
+    </nav>
+</div>
+
+<main>
+    <div class="container">
+        <div class="user-account">
+            <div class="row">
+                <partial name="_Sidebar"/>
+                <div class="col-md-9 col-sm-8 col-xs-12">
+                    <section class="user-account-content">
+                        <header><h1> شارژ کیف پول </h1></header>
+                        <div class="inner form-layer">
+                            <form asp-action="Index" method="post">
+                                <div class="row">
+                                    <div class="col-md-7 col-sm-8 col-xs-12">
+                                        <div class="input-group">
+                                            <span class="input-group-addon" id="username"><i class="zmdi zmdi-money"></i></span>
+                                            <input type="number" class="form-control" asp-for="Amount" placeholder="مبلغ به تومان">
+                                        </div>
+                                    <div class="text-danger"  asp-validation-summary="All"></div>
+                                    <div class="col-md-7 col-sm-8 col-xs-12">
+                                        <button class="btn btn-success"> شارژ کیف پول </button>
+                                    </div>
+                                </div>
+                            </form>
+                            <br />
+                            <hr />
+                            @{
+                                List<WalletViewModel> list = ViewBag.WalletList as List<WalletViewModel>;
+                            }
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th>مبلغ</th>
+                                    <th>تاریخ</th>
+                                    <th>نوع تراکنش</th>
+                                    <th>شرح</th>
+                                </tr>
+                                @foreach(var item in list)
+                                {
+                                    <tr>
+                                        <td>@item.Amount.ToString("#,0 تومان")</td>
+                                        <td>@item.DateTime.ToShamsi()</td>
+                                        <td>
+                                            @if(item.Type == 1)
+                                            {
+                                                <p class="text-success">واریز به حساب</p>
+                                            }
+                                            else
+                                            {
+                                                <p class="text-danger">برداشت از حساب</p>
+                                            }
+                                        </td>
+                                        @{
+                                            string tagHref = "<a href='/UserPanel/Order/ShowOrder?orderId=" + item.Description.Replace("فاکتور شماره #","") +"' >#</a>";
+                                        }
+                                        <td>@Html.Raw(item.Description.Replace("#", tagHref))</td>
+                                    </tr>
+                                }
+                                <tr>
+                                    <td colspan="3"  class="text-left">موجودی کیف پول : </td>
+                                    <td>
+                                        @_userService.UserWalletBalance(User.Identity.Name) 
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

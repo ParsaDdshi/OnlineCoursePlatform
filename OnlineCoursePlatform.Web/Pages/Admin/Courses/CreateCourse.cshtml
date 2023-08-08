@@ -1,0 +1,126 @@
+﻿@page
+@model OnlineCoursePlatform.Web.Pages.Admin.Courses.CreateCourseModel
+@{
+    ViewData["Title"] = "افزودن دوره جدید";
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">افزودن دوره جدید</h1>
+    </div>
+</div>
+
+<div class="row">
+    <form method="post" enctype="multipart/form-data"> 
+        <div class="col-md-8">
+           <div class="form-group">
+                <label>عنوان دوره</label>
+                <input type="text" asp-for="Course.CourseTitle" class="form-control" />
+                <span asp-validation-for="Course.CourseTitle" class="text-danger"></span>
+           </div>
+
+           <div class="form-group">
+                <label>گروه اصلی</label>
+                <select class="form-control" asp-for="Course.GroupId" asp-items="@ViewData["Gruops"] as SelectList"></select>
+                <span asp-validation-for="Course.GroupId" class="text-danger"></span>
+           </div>
+
+           <div class="form-group">
+                <label>زیر گروه</label>
+                <select class="form-control" asp-for="Course.SubGroup" asp-items="@ViewData["SubGruops"] as SelectList"></select>
+                <span asp-validation-for="Course.SubGroup" class="text-danger"></span>
+           </div>
+
+           <div class="form-group">
+                <label>مدرس دوره</label>
+                <select class="form-control" asp-for="Course.TeacherId" asp-items="@ViewData["Teachers"] as SelectList"></select>
+                <span asp-validation-for="Course.TeacherId" class="text-danger"></span>
+           </div>
+
+           <div class="form-group">
+                <label>شرح دوره</label>
+                <textarea class="form-control" rows="10" asp-for="Course.CourseDescription"></textarea>
+                <span asp-validation-for="Course.CourseDescription" class="text-danger"></span>
+           </div>
+
+           <div class="form-group">
+                <label>قیمت دوره</label>
+                <input type="number" asp-for="Course.CoursePrice" class="form-control" value="0"/>
+                <span asp-validation-for="Course.CoursePrice" class="text-danger"></span>
+           </div>
+
+           <div class="form-group">
+                <label>فایل دمو دوره</label>
+                <input type="file" name="demoUp"/>
+           </div>
+
+           <div class="form-group">
+                <label>کلمات کلیدی دوره</label>
+                <input type="text" asp-for="Course.Tags" class="form-control"/>
+                <p class="help-block">کلمات را با "-" از  یکدیگر جدا کنید</p>
+                <span asp-validation-for="Course.Tags" class="text-danger"></span>
+           </div>
+           <button type="submit" class="btn btn-success">ثبت دوره</button>
+        </div>
+
+        <div class="col-md-4">
+            <br />
+            <img id="imgCourse" class="thumbnail" src="/Course/img/CourseDefault.png"/>
+            <div class="form-group">
+                <label>انتخاب تصویر دوره</label>
+                <input type="file" name="imgCourseUp" id="imgCourseUp">
+            </div>
+
+           <div class="form-group">
+                <label>سطح دوره</label>
+                <select class="form-control" asp-for="Course.LevelId" asp-items="@ViewData["Levels"] as SelectList"></select>
+                <span asp-validation-for="Course.LevelId" class="text-danger"></span>
+           </div>
+
+           <div class="form-group">
+                <label>وضعیت دوره</label>
+                <select class="form-control" asp-for="Course.StatusId" asp-items="@ViewData["Status"] as SelectList"></select>
+                <span asp-validation-for="Course.StatusId" class="text-danger"></span>
+           </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+        <script>
+            $("#Course_GroupId").change(function() {
+                $("#Course_SubGroup").empty();
+                $.getJSON("/home/GetSubGroups/" + $("#Course_GroupId :selected").val(),
+                    function(data) {
+
+                        $.each(data,
+                            function() {
+                                $("#Course_SubGroup").append('<option value=' + this.value + '>' + this.text + '</option>');
+                            });
+                    });
+            });
+
+            function readURL(input) {
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        $('#imgCourse').attr('src', e.target.result);
+                    }
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+
+            $("#imgCourseUp").change(function () {
+                readURL(this);
+            });
+    </script>
+
+    <script src="https://cdn.ckeditor.com/4.9.2/standard/ckeditor.js"></script>
+    <script>
+
+        CKEDITOR.replace('Course_CourseDescription', {
+            customConfig: '/js/Config.js'
+        });
+
+    </script>
+}

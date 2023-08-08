@@ -1,0 +1,25 @@
+﻿@model List<CourseGroup>
+
+<div class="main-menu">
+    <div class="container">
+        <nav>
+            <span class="responsive-sign"><i class="zmdi zmdi-menu"></i></span>
+            <ul>
+                @foreach(CourseGroup group in Model.Where(g => g.ParentId == null))
+                {
+                    <li><a asp-controller="Course"  asp-action="Index" asp-route-selectedGroups="@group.GroupId">@group.GroupTitle </a>
+                        @if(Model.Any(g => g.ParentId == group.GroupId))
+                        {
+                            <ul>
+                                @foreach (CourseGroup sub in Model.Where(g => g.ParentId == group.GroupId))
+                                {
+                                    <li><a asp-controller="Course"  asp-action="Index" asp-route-selectedGroups="@sub.GroupId">@sub.GroupTitle</a></li>
+                                }
+                            </ul>                            
+                        }
+                    </li>
+                }
+            </ul>
+        </nav>
+    </div>
+</div>

@@ -1,0 +1,84 @@
+﻿@page
+@model OnlineCoursePlatform.Web.Pages.Admin.CourseGroups.IndexModel
+@using OnlineCoursePlatform.Core.Services.Interfaces;
+@inject IPermissionService permissionService;
+@{
+    ViewData["Title"] = "لیست گروه ها";
+    string userName = User.Identity.Name;
+    bool editPermission = permissionService.CheckPermission(14, userName);
+    bool deletePermission = permissionService.CheckPermission(15, userName);
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">لیست گروه ها</h1>
+    </div>
+</div>
+
+
+<div id="dataTables-example_wrapper" class="dataTables_wrapper form-inline" role="grid">
+    @if (permissionService.CheckPermission(13, userName))
+    {
+        <div>
+            <a asp-page="CreateGroup" class="btn btn-outline btn-success">افزودن گروه جدید</a>
+        </div>
+    }
+    <br />
+    <table class="table table-striped table-bordered table-hover dataTable no-footer" id="dataTables-example" aria-describedby="dataTables-example_info">
+        <thead>
+            <tr>
+                <th>عنوان گروه</th>
+                <th>زیر گروه ها</th>
+                <th>دستورات</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var group in Model.CourseGroups.Where(g => g.ParentId == null))
+            {
+                <tr>
+                    <td>@group.GroupTitle</td>
+                    <td>
+                        @if(group.CourseGroups.Any())
+                        {
+                            <ul>
+                                @foreach (var sub in group.CourseGroups)
+                                {
+                                    <li>@sub.GroupTitle</li>
+                                    @if (permissionService.CheckPermission(14, userName))
+                                    {
+                                        <a href="/Admin/CourseGroups/EditGroup/@sub.GroupId" class="btn btn-outline btn-warning btn-xs">
+                                            ویرایش
+                                        </a>
+                                    }
+                                    @if (deletePermission)
+                                    {
+                                        <a href="/Admin/CourseGroups/DeleteGroup/@sub.GroupId" class="btn btn-outline btn-danger btn-xs">
+                                            حذف
+                                        </a>
+                                    }
+                                }
+                            </ul>
+                        }
+                    </td>
+                    <td>
+                        <a href="/Admin/CourseGroups/CreateGroup/@group.GroupId" class="btn btn-info">
+                            زیرگروه
+                        </a>
+                        @if (editPermission)
+                        {
+                            <a href="/Admin/CourseGroups/EditGroup/@group.GroupId" class="btn btn-warning">
+                                ویرایش
+                            </a>
+                        }
+                        @if (deletePermission)
+                        {
+                            <a href="/Admin/CourseGroups/DeleteGroup/@group.GroupId" class="btn btn-danger">
+                                حذف
+                            </a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

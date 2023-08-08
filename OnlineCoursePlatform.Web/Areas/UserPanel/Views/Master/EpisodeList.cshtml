@@ -1,0 +1,87 @@
+﻿@model List<CourseEpisode>
+@inject IPermissionService permissionService;
+@{
+    ViewData["Title"] = "مدیریت قسمت ها";
+    string userName = User.Identity.Name;
+    bool editPermission = permissionService.CheckPermission(23, userName);
+    bool deletePermission = permissionService.CheckPermission(24, userName);
+}
+
+<div class="container">
+    <nav aria-label="breadcrumb">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">پلتفرم دوره های آنلاین</a></li>
+            <li class="breadcrumb-item active" aria-current="page"> @ViewData["Title"] </li>
+        </ul>
+    </nav>
+</div>
+
+<main>
+    <div class="container">
+        <div class="user-account">
+            <div class="row">
+                <partial name="_SideBar" />
+                <div class="col-md-9 col-sm-8 col-xs-12">
+                    <section class="user-account-content">
+                        <header class="display-flex">
+                            <h1>@ViewData["Title"]</h1>
+                            <a class="btn btn-success" asp-controller="Master" asp-action="AddEpisode"
+                               asp-route-courseId="@ViewBag.CourseId">افزودن قسمت جدید</a>
+                        </header>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>عنوان</th>
+                                    <th>زمان</th>
+                                    <th>وضعیت</th>
+                                    <th>دستورات</th>
+                                </tr>
+
+                            </thead>
+                            <tbody>
+                                @foreach (CourseEpisode episode in Model)
+                                {
+                                    <tr>
+                                        <td>
+                                            @episode.EpisodeTitle
+                                        </td>
+                                        <td>
+                                            @episode.EpisodeTime
+                                        </td>
+                                        <td>
+                                            @if(episode.IsFree)
+                                            {
+                                                <span class="text-success">رایگان</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-danger">پولی</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-success" asp-area="" asp-controller="Course" asp-action="DownloadFile" asp-route-episodeId="@episode.EpisodeId">
+                                                دانلود
+                                            </a>
+                                            @if(editPermission)
+                                            {
+                                                <a class="btn btn-warning" href="/Admin/Courses/EditEpisode/@episode.EpisodeId">
+                                                    ویرایش
+                                                </a>
+                                            }
+                                            @if(deletePermission)
+                                            {
+                                                <a class="btn btn-danger" href="/Admin/Courses/DeleteEpisode/@episode.EpisodeId">
+                                                    حذف
+                                                </a>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

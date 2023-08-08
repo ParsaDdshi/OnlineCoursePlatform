@@ -1,0 +1,57 @@
+﻿@{
+    ViewData["Title"] = "خانه";
+}
+
+@section SearchBox
+{
+  <header>
+    <h1> با اساتید مجرب و کارآزموده  </h1>
+    <h2> آموزش ببینید ، تجربه کسب کنید و بازار کار شوید </h2>
+    <h3> با کمترین هزینه خودت یاد بگیر </h3>
+  </header>
+  <div class="search-form">
+    <form asp-controller="Course" asp-action="Index" method="get">
+        <input type="text" name="filter" id="term" placeholder="چی دوست داری یاد بگیری ؟">
+        <button><i class="zmdi zmdi-search"></i></button>
+    </form>
+  </div>
+}
+
+<main id="home-page">
+    <div class="container">
+        <section class="terms-items">
+            <header>
+                <h2> آخرین دوره ها </h2>
+            </header>
+            <div class="row">
+                <cache expires-after="@TimeSpan.FromMinutes(5)">
+                    @await Component.InvokeAsync("LatestCourses")
+                </cache>
+            </div>
+        </section>
+
+        <hr>
+
+        <section class="terms-items">
+            <header>
+                <h2>پرفروش ترین دوره ها</h2>
+            </header>
+            <div class="row">
+                <cache expires-after="@TimeSpan.FromHours(1)">
+                    @await Component.InvokeAsync("PopularCourses")
+                </cache>
+            </div>
+        </section>
+     </div>
+</main>
+
+@section Scripts
+{
+    <script>
+        $(document).ready(function(){
+            $("#term").autocomplete({
+                source: 'api/CourseApi/search?term=' + $("#term").val
+            })
+        });
+    </script>
+}

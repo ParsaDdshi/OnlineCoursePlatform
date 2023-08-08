@@ -1,0 +1,10 @@
+﻿@model ShowCourseListItemViewModel
+
+<div class="col-lg-3 col-md-4 col-xs-12 term-col">
+    <article>
+        <a  asp-controller="Course" asp-action="ShowCourse" asp-route-courseId="@Model.CourseId" class="img-layer"><img src="/Course/thumb/@Model.ImageName"></a>
+        <h2><a asp-controller="Course" asp-action="ShowCourse" asp-route-courseId="@Model.CourseId"> @Model.Title </a></h2>
+        <span>@((Model.Price == 0) ? "رایگان" : Model.Price.ToString("#,0")+"تومان ")</span>
+        <i>@Model.TotalTime</i>
+    </article>
+</div>    

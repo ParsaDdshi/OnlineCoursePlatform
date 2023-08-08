@@ -1,0 +1,132 @@
+﻿@model Question
+@inject ICourseService courseService;
+@inject IOrderService orderService;
+@{
+    ViewData["Title"] = Model.Title;
+    Course course = courseService.GetCourseById((int)ViewBag.CourseId);
+}
+<style>
+    .true-answer {
+        border: 2px solid green !important;
+    }
+</style>
+<div class="container">
+    <nav aria-label="breadcrumb">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">پلتفرم دوره های آنلاین</a></li>
+            <li class="breadcrumb-item active" aria-current="page"> پرسش ها </li>
+            <li class="breadcrumb-item active" aria-current="page">  <a asp asp-controller="Forum"
+            asp-action="ShowQuestion" asp-route-questionId="@Model.QuestionId">@Model.Title</a> </li>
+        </ul>
+    </nav>
+</div>
+
+<div class="container">
+    <section class="term-content">
+        <header>
+            <h1> @Model.Title 
+                <span class="text-muted pull-left badge">@Model.CreateDate.ToShamsi()</span>
+            </h1>
+        </header>
+        <div class="row">
+            <div class="col-md-10 col-sm-12 col-xs-12 pull-left">
+                <section class="term-description">
+                    @Html.Raw(Model.Body)
+                </section>
+            </div>
+            <aside class="col-md-1 col-sm-12 col-xs-12 pull-right">
+                <article class="teacher-info" style="width:135px;height:135px">
+                    <img src="/UserAvatar/@Model.User.UserAvatar" style="width:65px;height:65px;">
+                    <h2> @Model.User.UserName </h2>
+                </article>
+            </aside>
+        </div>
+    </section>
+</div>
+    <div class="container">
+        <section class="term-content">
+            <header>
+                <h1>
+                    پاسخ ها
+                </h1>
+            </header>
+        </section>
+        @if(User.Identity.IsAuthenticated)
+        {
+            @if (course.CoursePrice == 0 
+            || orderService.IsUserInCourse(User.Identity.Name, (int)ViewBag.CourseId)
+            || course.TeacherId == int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier).ToString()))
+            {
+                @foreach (Answer answer in Model.Answers)
+                {
+                <section class="term-content">
+                    <div class="row">
+                        <div class="col-md-10 col-sm-12 col-xs-12 pull-left">
+                            <section class="term-description @((answer.IsTrue)?"true-answer":"")">
+                                @Html.Raw(answer.AnswerBody)
+                            </section>
+                            @if (User.Identity.IsAuthenticated && Model.User.UserId == int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier).ToString()) && !answer.IsTrue)
+                            {
+                                <a asp-controller="Forum"
+                                   asp-action="UpdateTrueAnswer"
+                                   asp-route-answerId="@answer.AnswerId"
+                                   asp-route-questionId="@Model.QuestionId"
+                                   class="btn btn-success">
+                                    پاسخ صحیح
+                                </a>
+                            }
+                        </div>
+                        <aside class="col-md-2 col-sm-12 col-xs-12 pull-right">
+                            <article class="teacher-info" style="width:135px; height:170px">
+                                <img src="/UserAvatar/@answer.User.UserAvatar" style="width:65px;height:65px">
+                                <h2> @answer.User.UserName </h2>
+                                <span class="text-muted pull-left badge">@answer.CreateDate.ToShamsi()</span>
+                            </article>
+                        </aside>
+                    </div>
+                </section>
+                }
+
+            <div class="inner">
+                <div class="panel">
+                    <div class="panel-heading">
+                        <h1 class="text-success text-muted">افزودن پاسخ جدید</h1>
+                    </div>
+                    <div class="panel-body">
+                        <form asp-action="CreateAnswer">
+                            <div class="form-group">
+                                <input type="hidden" name="questionId" value="@Model.QuestionId" />
+                                <textarea name="body"></textarea>
+                                <button class="btn btn-block btn-success" type="submit">ثبت پاسخ شما</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-danger">
+                برای مشاهده پاسخ ها ابتدا دوره را تهیه کنید
+            </div>
+        }
+    }
+        else
+        {
+        <div class="alert alert-danger">
+            برای مشاهده پاسخ ها ابتدا وارد سایت شوید
+        </div>
+        }
+</div>
+
+@section Scripts
+{
+    <script src="https://cdn.ckeditor.com/4.15.1/standard/ckeditor.js"></script>
+    <script>
+
+            CKEDITOR.replace('body', {
+            customConfig: '/js/Config.js'
+        });
+
+    </script>
+}

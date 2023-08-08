@@ -1,0 +1,103 @@
+﻿@model Tuple<List<Question>, int>
+@inject ICourseService courseService;
+@inject IOrderService orderService;
+@{
+    ViewData["Title"] = "انجمن";
+}
+
+<div class="container">
+    <nav aria-label="breadcrumb">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">پلتفرم دوره های آنلاین</a></li>
+            <li class="breadcrumb-item active" aria-current="page"> پرسش ها </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <a asp-controller="Forum">انجمن</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+
+<div class="container">
+    @if(ViewBag.CourseId != null)
+    {
+        Course course = courseService.GetCourseById((int)ViewBag.CourseId);
+        @if (User.Identity.IsAuthenticated)
+        {
+            if ((course.CoursePrice == 0 
+            || orderService.IsUserInCourse(User.Identity.Name, (int)ViewBag.CourseId))
+            || course.TeacherId == int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier).ToString()))
+            {
+                <a class="btn btn-success" asp-controller="Forum" asp-action="CreateQuestion" asp-route-courseId="@ViewBag.CourseId">
+                    ایجاد سوال
+                </a>
+                <br />
+            }
+            else
+            {
+                <div class="alert alert-danger">
+                    شما این دوره را خریداری نکرده اید
+                </div>
+            }
+
+        }
+        else
+        {
+            <div class="alert alert-warning">
+                برای پرسیدن سوال ابتدا وارد سایت شوید
+            </div>
+        }
+    }
+    <form class="form-inline" asp-action="Index" method="get">
+        <input type="text" placeholder="عبارت را وارد کنید" class="form-control" name="filter" value="@ViewBag.Filter" />
+        <button type="submit" class="btn btn-outline btn-success">
+            بیاب
+        </button>
+        <input type="hidden" name="courseId" value="@ViewBag.CourseId" />
+    </form>
+</div>
+<br />
+@foreach(Question question in Model.Item1)
+{
+    <div class="container">
+        <section class="term-content">
+            <div class="row">
+                <div class="col-md-10 col-sm-12 col-xs-12 pull-left">
+                    <section class="term-description">
+                        <a asp-controller="Forum" 
+                        asp-action="ShowQuestion" 
+                        asp-route-questionId="@question.QuestionId"
+                        asp-route-courseId="@ViewBag.CourseId">
+                            @question.Title
+                        </a>
+                        <span class="text-muted pull-left badge">@question.CreateDate.ToShamsi()</span>
+                        <p class="text-muted">@question.Course.CourseTitle</p>
+                    </section>
+                </div>
+                <aside class="col-md-2 col-sm-12 col-xs-12 pull-right">
+                    <article class="teacher-info" style="width:135px;height:135px">
+                        <img src="/UserAvatar/@question.User.UserAvatar" style="width:65px;height:65px;">
+                        <h2> @question.User.UserName </h2>
+                    </article>
+                </aside>
+            </div>
+        </section>
+    </div>
+}
+
+<div class="container">
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+
+            @for (int i = 1; i <= Model.Item2; i++)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-controller="Forum"
+                       asp-action="Index" asp-route-pageId="@i"
+                       asp-route-courseId="@ViewBag.CourseId"
+                       asp-route-filter="@ViewBag.Filter">@i</a>
+                </li>
+            }
+        </ul>
+    </nav>
+</div>

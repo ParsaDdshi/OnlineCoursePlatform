@@ -1,0 +1,37 @@
+﻿@page "{id}"
+@model OnlineCoursePlatform.Web.Pages.Admin.Users.DeleteUserModel
+@{
+    ViewData["Title"] = "حذف کاربر";
+}
+
+
+<div class="col-md-12">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+        حذف کاربر
+        </div>
+        <div class="panel-body">
+            <form method="post">
+                <input type="hidden" name="userId" value="@ViewData["UserId"]"/>
+                <dl class="dl-horizontal">
+                    <dt>نام کاربری : </dt>
+                    <dd>@Model.UserInformationViewModel.UserName</dd>
+
+                    <dt>ایمیل: </dt>
+                    <dd>@Model.UserInformationViewModel.Email</dd>
+
+                    <dt>تاریخ ثبت نام : </dt>
+                    <dd>@Model.UserInformationViewModel.RegisterDate.ToShamsi()</dd>
+
+                    <dt>موجودی کیف پول : </dt>
+                    <dd>@Model.UserInformationViewModel.Wallet تومان</dd>
+
+                    <dt></dt>
+                    <dd>
+                        <input type="submit" class="btn btn-danger" value="حذف" />
+                    </dd>
+                </dl>
+            </form>
+        </div>
+</div>
+</div>

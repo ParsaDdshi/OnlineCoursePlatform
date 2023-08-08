@@ -1,0 +1,53 @@
+﻿@page "{id}"
+@model OnlineCoursePlatform.Web.Pages.Admin.Courses.CreateEpisodeModel
+@{
+    ViewData["Title"] = "افزودن بخش جدید";
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">افزودن قسمت جدید</h1>
+    </div>
+</div>
+
+<div class="row">
+    <form method="post" enctype="multipart/form-data">
+        <input type="hidden" asp-for="CourseEpisode.CourseId" />
+        <div class="col-md-12">
+           <h2>اطلاعات قسمت جدید</h2>
+           <div class="form-group">
+                <label>عنوان قسمت</label>
+                <input type="text" asp-for="CourseEpisode.EpisodeTitle" class="form-control" />
+                <span asp-validation-for="CourseEpisode.EpisodeTitle" class="text-danger"></span>
+           </div>
+
+           <div class="form-group">
+                <label>مدت زمان بخش</label>
+                <input type="text" asp-for="CourseEpisode.EpisodeTime" class="form-control" />
+                <span asp-validation-for="CourseEpisode.EpisodeTime" class="text-danger"></span>
+           </div>
+
+           <div class="form-group">
+                <label>فایل قسمت</label>
+                <input type="file" name="episodeFile"/>
+                <p class="text-danger">فایل اجباری است</p>
+                @if (ViewData["FileExistence"] != null)
+                {
+                    <div class="alert alert-danger">
+                        نام قایل معتبر نیست لطفا آن را تغییر دهید
+                    </div>
+                }
+            </div>
+
+           <div class="form-group">
+               <label>دسترسی</label>
+               <br />
+               <input type="checkbox" asp-for="CourseEpisode.IsFree" value="true" /> رایگان است
+           </div>
+
+           <div class="form-group">
+               <input type="submit" value="ذخیره اطلاعات" class="btn btn-success"/>
+           </div>
+        </div>
+    </form>
+</div>

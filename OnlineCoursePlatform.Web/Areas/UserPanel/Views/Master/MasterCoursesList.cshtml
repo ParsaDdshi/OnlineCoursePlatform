@@ -1,0 +1,71 @@
+﻿@model List<Course>
+@inject IPermissionService permissionService
+@{
+    ViewData["Title"] = "لیست دوره های شما";
+    string userName = User.Identity.Name;
+    bool editPermission = permissionService.CheckPermission(19, userName);
+    bool episodeListPermission = permissionService.CheckPermission(21, userName);
+}
+
+<div class="container">
+    <nav aria-label="breadcrumb">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">پلتفرم دوره های آنلاین</a></li>
+            <li class="breadcrumb-item active" aria-current="page"> @ViewData["Title"] </li>
+        </ul>
+    </nav>
+</div>
+
+<main>
+    <div class="container">
+        <div class="user-account">
+            <div class="row">
+                <partial name="_SideBar"/>
+                <div class="col-md-9 col-sm-8 col-xs-12">
+                    <section class="user-account-content">
+                        <header><h1>@ViewData["Title"]</h1></header>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>عنوان دوره</th>
+                                    <th>وضعیت</th>
+                                    <th>تعداد قسمت ها</th>
+                                    <th>دستورات</th>
+                                </tr>
+
+                            </thead>
+                            <tbody>
+                                @foreach (Course course in Model)
+                                {
+                                    <tr>
+                                        <td>
+                                            <a asp-area="" asp-controller="Course" asp-action="ShowCourse"
+                                               asp-route-courseId="@course.CourseId">@course.CourseTitle</a>
+                                        </td>
+                                        <td>
+                                            @course.CourseStatus.StatusTitle
+                                        </td>
+                                        <td>@course.CourseEpisodes.Count()</td>
+                                        <td>
+                                            @if(episodeListPermission)
+                                            {
+                                                <a asp-controller="Master" asp-action="EpisodeList"
+                                                   asp-route-courseId="@course.CourseId"
+                                                   class="btn btn-info">مدیریت قسمت ها</a>
+                                            }
+                                            @if(editPermission)
+                                            {
+                                                <a href="/Admin/Courses/EditCourse/@course.CourseId"
+                                                   class="btn btn-warning">ویرایش</a>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

@@ -1,0 +1,35 @@
+﻿<footer>
+    <div class="top-footer">
+         <div class="container">
+             <div class="row">
+                 <div class="col-md-3 col-sm-6 col-xs-12">
+                     <section class="list">
+                     <header><h4> دسترسی سریع</h4></header>
+                        <ul>
+                            <li><a asp-controller="Home" asp-action="Index">خانه</a></li>
+                            <li><a asp-controller="Home" asp-action="About">درباره ما </a></li>
+                            <li><a asp-controller="Home" asp-action="Contact">تماس با ما </a></li>
+                            @if(User.Identity.IsAuthenticated)
+                            {
+                                <li><a asp-area="UserPanel" asp-controller="Home" asp-action="Index">پروفایل</a></li>
+                            }
+                            else
+                            {
+                                <li><a asp-controller="Account" asp-action="Register">ثبت نام</a></li>
+                                <li><a asp-controller="Account" asp-action="Login">ورود به سایت</a></li>
+                            }
+                            <li><a asp-controller="Forum">انجمن</a></li>
+                        </ul>
+                     </section>
+                 </div>
+             </div>
+         </div>
+    </div>
+    <div class="bottom-footer">
+        <div class="container">
+             <p>
+             تمامی حقوق مادی و معنوی این قالب متعلق به <a href=""> تاپ لرن </a> می باشد و هرگونه کپی برداری و انتشار غیر مجاز پیگرد قانونی دارد .
+             </p>
+        </div>
+    </div>
+</footer>

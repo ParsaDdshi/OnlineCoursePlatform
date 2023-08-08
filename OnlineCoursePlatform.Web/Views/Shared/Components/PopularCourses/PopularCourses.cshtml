@@ -1,0 +1,9 @@
+﻿@model List<ShowCourseListItemViewModel>
+
+@if (Model != null)
+{
+    @foreach (var item in Model)
+    {
+        <partial name="_CourseBox" model="@item" />
+    }
+}

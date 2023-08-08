@@ -1,0 +1,72 @@
+﻿@model List<Order>
+
+@{
+    ViewData["Title"] = "نمایش فاکتورها";
+}
+
+<div class="container">
+    <nav aria-label="breadcrumb">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">پلتفرن دوره های آنلاین</a></li>
+            <li class="breadcrumb-item active" aria-current="page"> نمایش فاکتورها </li>
+        </ul>
+    </nav>
+</div>
+
+<main>
+    <div class="container">
+        <div class="user-account">
+            <div class="row">
+                <partial name="_SideBar"/>
+                <div class="col-md-9 col-sm-8 col-xs-12">
+                    <section class="user-account-content">
+                        <header><h1>فاکتورهای شما</h1></header>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>شماره فاکتور</th>
+                                    <th>تاریخ</th>
+                                    <th>جمع</th>
+                                    <th>پرداخت</th>
+                                    <th>دستورات</th>
+                                </tr>
+
+                            </thead>
+                            <tbody>
+                                @foreach (Order order in Model)
+                                {
+                                    <tr>
+                                        <td>
+                                            @order.OrderId
+                                        </td>
+                                        <td>
+                                            @order.CreateDate.ToShamsi()
+                                        </td>
+                                        <td>@order.OrderSum</td>
+                                        <td>
+                                            @if(order.IsFinished)
+                                            {
+                                                <p class="text-success">
+                                                    پرداخت شده
+                                                </p>
+                                            }
+                                            else
+                                            {
+                                                <p class="text-danger">
+                                                    پرداخت نشده
+                                                </p>                                             
+                                            }
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-info" href="/UserPanel/Order/ShowOrder?orderId=@order.OrderId">نمایش</a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

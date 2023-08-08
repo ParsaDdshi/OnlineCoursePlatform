@@ -1,0 +1,132 @@
+﻿@using OnlineCoursePlatform.Core.Services.Interfaces;
+@inject IPermissionService permissionServic;
+
+@{
+    string userName = User.Identity.Name;
+}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <partial name="_MetaTags"/>
+    <title>پنل مدیریت سایت | @ViewData["Title"]</title>
+    <partial name="_Styles"/>
+</head>
+
+<body style="font-family:Sahel">
+
+    <div id="wrapper">
+
+        <nav class="navbar navbar-default navbar-fixed-top" role="navigation" style="margin-bottom: 0">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/Admin">پنل مدیریت سایت</a>
+            </div>
+            <!-- /.navbar-header -->
+            <div class="navbar-default navbar-static-side" role="navigation">
+                <div class="sidebar-collapse">
+                    <ul class="nav" id="side-menu">
+                        <li>
+                            <a href="/">بازگشت به سایت</a>
+                        </li>
+                        @if (permissionServic.CheckPermission(17, userName))
+                        {
+                            <li>
+                                <a href="/Admin"> مدیریت دوره ها</a>
+                            </li>
+                        }
+                        @if (permissionServic.CheckPermission(12, userName))
+                        {
+                            <li>
+                                <a href="#">  گروه ها</a>
+                                <ul class="nav nav-second-level">
+                                    <li>
+                                        <a href="/Admin/CourseGroups">لیست گروه ها</a>
+                                    </li>
+                                    @if (permissionServic.CheckPermission(16, userName))
+                                    {
+                                        <li>
+                                            <a href="/Admin/CourseGroups/DeletedGroupsList">گروه های حذف شده</a>
+                                        </li>
+                                    }
+                                </ul>
+                            </li>
+                        }
+                        @if (permissionServic.CheckPermission(2, userName))
+                        {
+                            <li>
+                                <a href="#"> مدیریت کاربران</a>
+                                <ul class="nav nav-second-level">
+                                    <li>
+                                        <a href="/Admin/Users">لیست کاربران</a>
+                                    </li>
+                                    @if (permissionServic.CheckPermission(6, userName))
+                                    {
+                                        <li>
+                                            <a href="/Admin/Users/DeletedUserList">کاربران حذف شده</a>
+                                        </li>
+                                    }
+                                </ul>
+                            </li>
+                        }
+                        @if (permissionServic.CheckPermission(7, userName))
+                        {
+                            <li>
+                                <a href="#"> مدیریت نقش ها</a>
+                                <ul class="nav nav-second-level">
+                                <li>
+                                    <a href="/Admin/Roles">نقش ها</a>
+                                </li>
+                                    @if (permissionServic.CheckPermission(11, userName))
+                                    {
+                                        <li>
+                                            <a href="/Admin/Roles/DeletedRoleList">نقش های حذف شده</a>
+                                        </li>
+                                    }
+                                </ul>
+                            </li>
+                        }
+
+                        @if (permissionServic.CheckPermission(25, userName))
+                        {
+                            <li>
+                                <a href="#">کدهای تخفیف</a>
+                                <ul class="nav nav-second-level">
+                                    <li>
+                                        <a href="/Admin/Discounts">لیست کدها</a>
+                                    </li>
+                                    @if (permissionServic.CheckPermission(29, userName))
+                                    {
+                                        <li>
+                                            <a href="/Admin/Discounts/DeletedDiscountCodes">لیست کدهای حذف شده</a>
+                                        </li>
+                                    }
+                                </ul>
+                            </li>
+                        }
+                    </ul>
+                    <!-- /#side-menu -->
+                </div>
+                <!-- /.sidebar-collapse -->
+            </div>
+            <!-- /.navbar-static-side -->
+        </nav>
+
+        <div id="page-wrapper">
+            @RenderBody()
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+    <partial name="_Scripts"/>
+    @RenderSection("Scripts", false)
+
+</body>
+
+</html>

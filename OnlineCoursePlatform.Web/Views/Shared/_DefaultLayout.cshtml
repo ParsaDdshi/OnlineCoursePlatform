@@ -1,0 +1,37 @@
+﻿<!DOCTYPE html>
+<html class="no-js" dir="rtl" lang="fa-IR">
+    <head>
+        <title> سایت دوره آنلاین | @ViewData["Title"] </title>
+        <partial name="_MetaTags"/>
+        <partial name="_Styles"/>
+        <script src="/js/jquery.min.js"></script>
+    </head>
+    <body dir="rtl">
+        <script src="/js/modernizr-custom.js"></script>
+
+        <div class="landing-layer">
+            <div class="container">
+                <partial name="_Navbar"/>
+                @RenderSection("SearchBox", false)
+            </div>
+        </div>
+
+        <!-- main manu -->
+        <cache expires-after="@TimeSpan.FromHours(2)">
+            @await Component.InvokeAsync("CourseGroupComponent")
+        </cache>
+        <!-- /main manu -->
+
+        <!-- content -->
+        @RenderBody()
+        <!-- /content -->
+
+        <!-- footer -->
+        <partial name="_Footer"/>
+        <!-- /footer -->
+
+        <partial name="_Scripts"/>
+
+        @RenderSection("Scripts",false)
+    </body>
+</html>
