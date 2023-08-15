@@ -30,6 +30,8 @@ Hello, I am Parsa and I developed this website in my free time. this is a online
 **Server:** Asp.net core, Ef core, Razor Pages, Sql Server
 
 ## Installation
+
+Before starting the project create courseFiles, courseOnline, freeCourseOnline and MyImages in wwwroot.
  
  In this project you need to install sql server.
  In VS Package Manager Consloe set the default project to OnlineCoursePlatform.DataLayer
